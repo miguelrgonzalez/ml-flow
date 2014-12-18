@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow-definition id="11111" xmlns="http://marklogic.com/mlworkflow/workflow-definition">
+    <metadata>
+        <name>sample-workflow</name>
+        <description>Sample workflow definition</description>
+        <!-- if persist-state is false the workflow engine won't try to persist
+             input nor output of each individual step -->
+        <persist-state>true</persist-state>
+    </metadata>
+
+    <!--
+    failure queue sets the queue where to move the step in case of failure.
+    If not set it will move the step to the end of the queue and keep looping
+    up to the stated number of retries (defaults to 0. No retries)
+    -->
+
+    <step name="validate-data"
+          sequence="1"
+          queue-id="12345"
+          failure-queue="123"
+          retries="2"
+          retry-timeout="5">
+
+        <module>/app/custom/validation.xqy</module>
+        <function>validate</function>
+    </step>
+
+    <condition name="check-availability" sequence="2" queue-id="12345">
+        <module>/app/custom/resources.xqy</module>
+        <function>check-availability</function>
+
+        <path condition-value="true">
+            <step name="reserve-resource" sequence="1" queue-id="12345">
+                <module>/app/custom/resources.xqy</module>
+                <function>reserve-resource</function>
+            </step>
+
+            <parallel-steps name="send-notifications" sequence="2">
+                <step name="send-notification-1" queue-id="6789">
+                    <module>/app/custom/send-notifications.xqy</module>
+                    <function>notify</function>
+                    <params>
+                        <param-name>param-value</param-name>
+                    </params>
+                </step>
+                <step name="send-notification-2" queue-id="6789">
+                    <module>/app/custom/send-notifications.xqy</module>
+                    <function>notify</function>
+                    <params>
+                        <param-name>param-value</param-name>
+                    </params>
+                </step>
+            </parallel-step>
+        </path>
+
+        <path condition-value="false">
+            <import-workflow id="112222">
+                <params>
+                    <param-name>param-value</param-name>
+                </params>
+            </import-workflow>
+        </path>
+    </condition>
+
+</workflow-definition>

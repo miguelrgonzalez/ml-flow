@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow-instance xmlns="http://marklogic.com/mlworkflow/workflow-instance">
+    <metadata>
+        <name>sample-workflow</name>
+        <description>Sample workflow definition</description>
+        <!-- if persist-state is false the workflow engine won't try to persist
+             input nor output of each individual step -->
+        <persist-state>true</persist-state>
+    </metadata>
+
+    <step name="validate-data"
+          sequence="1"
+          queue-id="12345"
+          failure-queue="123"
+          retries="2">
+        <module>/app/custom/validation.xqy</module>
+        <function>validate</function>
+        <!-- not-started, running, completed, failed, stopped -->
+        <state status="not-started">
+            <data>
+                <map:map xmlns:map="http://marklogic.com/xdmp/map">
+                </map:map>
+            </data>
+        </state>
+    </step>
+
+</workflow-instance>

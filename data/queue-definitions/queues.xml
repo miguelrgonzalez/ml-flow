@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queues-definition xmlns="http://marklogic.com/mlworkflow/queue-definition">
+    <queue id="123">
+        <name>manual-queue</name>
+        <description>Manual queue</description>
+        <workers>0</workers>
+    </queue>
+    <queue id="124">
+        <name>automatic-fifo-queue</name>
+        <description>Automatic FIFO queue</description>
+        <!-- How many steps will be processed in parallel each time -->
+        <workers>1</workers>
+        <!-- How often to check for work in seconds -->
+        <heartbeat>1</heartbeat>
+    </queue>
+    <queue id="125">
+        <name>Automatic parallel queue</name>
+        <workers>5</workers>
+        <heartbeat>1</heartbeat>
+    </queue>
+</queues-definition>
